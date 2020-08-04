@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE beans SYSTEM "C:\Users\lan\IdeaProjects\demo\custom\orm\src\main\resources\factory.dtd">
+<beans>
+    <bean id="anlanUser" class="club.anlan.demo.custom.orm.bean.User">
+        <property name="id" value="10000" type="long"/>
+        <property name="name" value="anlan" type="string"/>
+        <property name="password" value="haiyang1996" type="string"/>
+        <property name="phone" value="180xxxxxxxx" type="string"/>
+        <property name="email" value="anlan1996@qq.com" type="string"/>
+    </bean>
+
+    <bean id="order" class="club.anlan.demo.custom.orm.bean.Order">
+        <property name="id" value="10000" type="long"/>
+        <property name="orderNo" value="1008611" type="string"/>
+    </bean>
+</beans>

@@ -1,8 +1,11 @@
 package orm;
 
 import club.anlan.demo.custom.orm.bean.User;
+import club.anlan.demo.custom.orm.util.ORMAnnoHelper;
 import club.anlan.demo.custom.orm.xmlparser.FactoryBuilder;
 import org.junit.Test;
+
+import java.lang.reflect.Field;
 
 /**
  * test 类
@@ -23,5 +26,14 @@ public class TestFactory {
         User user = (User) factory.getBean("anlanUser");
         System.out.println(user);
 
+    }
+
+    @Test
+    public void testTable() {
+        String tableName = ORMAnnoHelper.getTableName(User.class);
+        System.out.println(tableName);
+        for (Field field : User.class.getDeclaredFields()) {
+            System.out.println(ORMAnnoHelper.getColumnName(field));
+        }
     }
 }

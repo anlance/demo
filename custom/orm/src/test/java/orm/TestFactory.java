@@ -1,11 +1,13 @@
 package orm;
 
 import club.anlan.demo.custom.orm.bean.User;
+import club.anlan.demo.custom.orm.factory.DBSessionFactory;
 import club.anlan.demo.custom.orm.util.ORMAnnoHelper;
 import club.anlan.demo.custom.orm.xmlparser.FactoryBuilder;
 import org.junit.Test;
 
 import java.lang.reflect.Field;
+import java.util.List;
 
 /**
  * test 类
@@ -34,6 +36,18 @@ public class TestFactory {
         System.out.println(tableName);
         for (Field field : User.class.getDeclaredFields()) {
             System.out.println(ORMAnnoHelper.getColumnName(field));
+        }
+    }
+
+    @Test
+    public void testQuery() {
+        DBSessionFactory factory = new DBSessionFactory();
+
+        try {
+            List<User> users = factory.openSession().list(User.class);
+            System.out.println(users);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }

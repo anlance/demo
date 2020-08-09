@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<actions>
+    <action path="/login" name = "">
+        <result name="success" path="index.jsp"/>
+        <result name="fail" path="login.jsp"/>
+    </action>
+
+    <action path="/index.do" name = "club.anlan.demo.custom.mvc.action.IndexAction">
+        <result name="success" path="index.html"/>
+        <result name="fail" path="index.jsp"/>
+    </action>
+</actions>

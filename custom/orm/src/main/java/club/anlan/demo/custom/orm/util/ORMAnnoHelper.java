@@ -37,4 +37,12 @@ public class ORMAnnoHelper {
         }
         return column.value();
     }
+
+    public static boolean isId(Field field) {
+        Column column = field.getAnnotation(Column.class);
+        if (column != null) {
+            return column.isId();
+        }
+        return false;
+    }
 }

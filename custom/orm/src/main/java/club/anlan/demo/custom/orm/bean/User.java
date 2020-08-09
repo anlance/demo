@@ -15,7 +15,7 @@ import lombok.Data;
 @Table("user")
 public class User {
 
-    @Column("user_id")
+    @Column(value="user_id", isId=true)
     private long id;
 
     @Column("username")

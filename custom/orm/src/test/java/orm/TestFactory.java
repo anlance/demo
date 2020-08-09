@@ -8,6 +8,7 @@ import org.junit.Test;
 
 import java.lang.reflect.Field;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * test 类
@@ -46,6 +47,42 @@ public class TestFactory {
         try {
             List<User> users = factory.openSession().list(User.class);
             System.out.println(users);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    public void testInsert() {
+        DBSessionFactory factory = new DBSessionFactory();
+        try {
+            DBSessionFactory.DBSession session = factory.openSession();
+            User user = new User();
+            user.setId(Long.parseLong("123456789111"));
+            user.setName("faker");
+            user.setPassword("faker");
+            user.setNickName("me");
+            user.setPhone("12345678901");
+            user.setEmail("123@qq.com");
+            session.save(user);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    public void testUpdate() {
+        DBSessionFactory factory = new DBSessionFactory();
+        try {
+            DBSessionFactory.DBSession session = factory.openSession();
+            User user = new User();
+            user.setId(Long.parseLong("123456789111"));
+            user.setName("faker-update");
+            user.setPassword("faker-update");
+            user.setNickName("me");
+            user.setPhone("12345678901");
+            user.setEmail("123@qq.com");
+            session.update(user);
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -6,10 +6,7 @@ import club.anlan.demo.custom.orm.util.ORMAnnoHelper;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.lang.reflect.Field;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -54,7 +51,8 @@ public class DBSessionFactory {
         }
 
         /**
-         *  通过反射来查询
+         * 通过反射来查询
+         *
          * @param cls
          * @param <T>
          * @return
@@ -90,12 +88,115 @@ public class DBSessionFactory {
                         field.set(obj, rs.getDouble(ORMAnnoHelper.getColumnName(field)));
                     } else if (type == Date.class) {
                         field.set(obj, rs.getDate(ORMAnnoHelper.getColumnName(field)));
+                    } else if (type == long.class || type == Long.class) {
+                        field.set(obj, rs.getLong(ORMAnnoHelper.getColumnName(field)));
                     }
                 }
                 list.add(obj);
             }
             stmt.close();
             return list;
+        }
+
+        /**
+         * 插入
+         *
+         * @param obj
+         * @return
+         */
+        public int save(Object obj) throws SQLException, IllegalAccessException {
+            String sql = "insert into %s(%s) values(%s)";
+            StringBuilder columns = new StringBuilder();
+            StringBuilder params = new StringBuilder();
+
+            Field[] fs = obj.getClass().getDeclaredFields();
+            for (int i = 0; i < fs.length; i++) {
+                columns.append(ORMAnnoHelper.getColumnName(fs[i]));
+                params.append("?");
+                if (i != fs.length - 1) {
+                    columns.append(",");
+                    params.append(",");
+                }
+            }
+
+            sql = String.format(sql, ORMAnnoHelper.getTableName(obj.getClass()), columns.toString(), params.toString());
+            PreparedStatement ps = conn.prepareStatement(sql);
+
+            System.out.println(sql);
+
+            // 设置预处理语句的每个参数值
+            int index = 1;
+            for (Field field : fs) {
+                Class<?> type = field.getType();
+                field.setAccessible(true);
+                if (type == String.class) {
+                    ps.setString(index, String.valueOf(field.get(obj)));
+                } else if (type == int.class || type == Integer.class) {
+                    ps.setInt(index, field.getInt(obj));
+                } else if (type == double.class || type == Double.class) {
+                    ps.setDouble(index, field.getDouble(obj));
+                } else if (type == Date.class) {
+                    ps.setDate(index, (java.sql.Date) field.get(obj));
+                } else if (type == long.class || type == Long.class) {
+                    ps.setLong(index, field.getLong(obj));
+                }
+                index++;
+            }
+
+            // 执行预处理语句
+            int rows = ps.executeUpdate();
+            ps.close();
+            return rows;
+        }
+
+        public int update(Object obj) throws SQLException, IllegalAccessException {
+            String sql = "update %s set %s  where %s";
+            StringBuilder params = new StringBuilder();
+            StringBuilder where = new StringBuilder();
+
+            Field[] fs = obj.getClass().getDeclaredFields();
+            for (int i = 0; i < fs.length; i++) {
+                if (ORMAnnoHelper.isId(fs[i])) {
+                    fs[i].setAccessible(true);
+                    where.append(ORMAnnoHelper.getColumnName(fs[i])).append("=").append(fs[i].get(obj));
+                    continue;
+                }
+                params.append(ORMAnnoHelper.getColumnName(fs[i])).append("=").append("?");
+                if (i != fs.length - 1) {
+                    params.append(",");
+                }
+            }
+
+            sql = String.format(sql, ORMAnnoHelper.getTableName(obj.getClass()), params.toString(), where);
+            PreparedStatement ps = conn.prepareStatement(sql);
+
+            System.out.println(sql);
+
+            int index = 1;
+            for (Field field : fs) {
+                Class<?> type = field.getType();
+                field.setAccessible(true);
+                if (ORMAnnoHelper.isId(field)) {
+                    continue;
+                }
+                if (type == String.class) {
+                    ps.setString(index, String.valueOf(field.get(obj)));
+                } else if (type == int.class || type == Integer.class) {
+                    ps.setInt(index, field.getInt(obj));
+                } else if (type == double.class || type == Double.class) {
+                    ps.setDouble(index, field.getDouble(obj));
+                } else if (type == Date.class) {
+                    ps.setDate(index, (java.sql.Date) field.get(obj));
+                } else if (type == long.class || type == Long.class) {
+                    ps.setLong(index, field.getLong(obj));
+                }
+                index++;
+            }
+
+            // 执行预处理语句
+            int rows = ps.executeUpdate();
+            ps.close();
+            return rows;
         }
 
 

@@ -11,6 +11,7 @@
     <modules>
         <module>custom</module>
         <module>util</module>
+        <module>leetcode</module>
     </modules>
 
 
